@@ -1,8 +1,17 @@
-import { UserType } from "../dtos/types/user.type.js";
-import { UserRegisterSchema } from "../dtos/zod/user.zod.js";
+import {
+  UserLoginType,
+  UserRegistrationType,
+} from "../dtos/types/user.type.js";
+import { UserLoginSchema, UserRegisterSchema } from "../dtos/zod/user.zod.js";
 
-const validateUser = async (user: UserType) => {
+export const validateUserRegistrationDetails = async (
+  user: UserRegistrationType,
+) => {
   return await UserRegisterSchema.safeParseAsync(user);
 };
 
-export default validateUser;
+export const validateUserLoginDetails = async (
+  userLoginDetails: UserLoginType,
+) => {
+  return await UserLoginSchema.safeParseAsync(userLoginDetails);
+};

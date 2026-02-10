@@ -1,4 +1,4 @@
-# register new user
+### register new user
 POST http://localhost:88/api/v1/register
 Content-Type: application/json
 
@@ -6,4 +6,13 @@ Content-Type: application/json
   "fullname": "John Doe",
   "email": "johndoe@example.com",
   "password": "JohnDoe@12345"
+}
+
+### login user
+POST http://localhost:88/api/v1/login
+Content-Type: application/json
+
+{
+  "email": "johndoe@yahoo.com",
+  "password": "JohnDoe@123456"
 }

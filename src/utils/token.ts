@@ -31,3 +31,4 @@ export const verifyToken = (token: string, password: string) => {
     throw new AuthError("Authentication failed", 401);
   }
 };
+
