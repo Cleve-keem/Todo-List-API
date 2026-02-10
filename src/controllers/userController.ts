@@ -7,7 +7,7 @@ import UserService from "../services/user.service.js";
 export default class UserController {
   static async registerUser(req: Request, res: Response) {
     try {
-      const { data, error } = validateUser(req.body);
+      const { data, error } = await validateUser(req.body);
       if (error) {
         const errorMessages = formatValidationError(error);
         return errorResponse(res, 400, "validation error", errorMessages);
@@ -25,6 +25,7 @@ export default class UserController {
       if (error.message.includes("email already exist")) {
         return errorResponse(res, error.code, error.message);
       }
+      console.log(error);
       return AppError(res, error.message);
     }
   }

@@ -1,6 +1,7 @@
 import express, { Application } from "express";
 import { limiter } from "./middleware/limiter.js";
 import userRoutes from "./routes/user.routes.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 const expressLoader = () => {
   const app: Application = express();
@@ -8,6 +9,7 @@ const expressLoader = () => {
   // middlewares
   app.use(limiter);
   app.use(express.json());
+  app.use(errorHandler);
 
   // apis
   app.get("/api/v1/health", (_, res) =>
