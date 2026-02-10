@@ -1,6 +1,6 @@
-import { UserType } from "../models/types/user.type.js";
-import { UserRepository } from "../repositories/user.reposity.js";
-import { UserAlreadyExitError } from "../utils/expections/UserErrors.js";
+import { UserType } from "../dtos/types/user.type.js";
+import { UserRepository } from "../models/repositories/user.repository.js";
+import { UserAlreadyExitError } from "../exceptions/UserErrors.js";
 
 export default class UserService {
   static async registerUser(user: UserType) {
@@ -15,7 +15,7 @@ export default class UserService {
     return await UserRepository.findUserId(userId);
   }
 
-  static async findUserByEmail(userEemailAddress: string) {
-    return await UserRepository.findUserEmail(userEemailAddress);
+  static async findUserByEmail(userEmail: string) {
+    return await UserRepository.findUserEmail(userEmail);
   }
 }

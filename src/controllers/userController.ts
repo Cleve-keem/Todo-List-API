@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import validateUser from "../utils/helpers/validator.js";
-import { formatValidationError } from "../utils/helpers/formatter.js";
+import validateUser from "../utils/validator.js";
+import { formatValidationError } from "../utils/formatter.js";
 import { AppError, errorResponse, successResponse } from "../utils/response.js";
 import UserService from "../services/user.service.js";
 

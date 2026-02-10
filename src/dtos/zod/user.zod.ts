@@ -1,6 +1,8 @@
+import bcrypt from "bcryptjs";
 import z from "zod";
 
-export const UserSchema = z.object({
+// create a baseUser schema
+const UserBase = z.object({
   fullname: z
     .string()
     .trim()
@@ -14,11 +16,21 @@ export const UserSchema = z.object({
       message: "Please provide a valid email address",
     })
     .trim(),
+});
+
+// Extend UserBase Schema to make UserRegistrationSchema
+export const UserRegisterSchema = UserBase.extend({
   password: z
     .string()
     .min(8, "Password must be at least 8 characters long")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
       "Password must contain an uppercase letter, lowercase letter, number, and special character",
-    ),
+    )
+    .transform(async (pwd) => {
+      const salt = await bcrypt.genSalt(10);
+      return await bcrypt.hash(pwd, salt);
+    }),
 });
+
+// Create a Login Schema

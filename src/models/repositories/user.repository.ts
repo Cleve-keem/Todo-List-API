@@ -1,5 +1,5 @@
-import { Users } from "../models/schema/user.schema.js";
-import { UserType } from "../models/types/user.type.js";
+import { Users } from "../schema/user.schema.js";
+import { UserType } from "../../dtos/types/user.type.js";
 
 export class UserRepository {
   // create and save
