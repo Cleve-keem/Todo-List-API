@@ -3,6 +3,7 @@ import validateUser from "../utils/validator.js";
 import { formatValidationError } from "../utils/formatter.js";
 import { AppError, errorResponse, successResponse } from "../utils/response.js";
 import UserService from "../services/user.service.js";
+import { generateAccessToken } from "../utils/token.js";
 
 export default class UserController {
   static async registerUser(req: Request, res: Response) {
@@ -14,12 +15,11 @@ export default class UserController {
       }
 
       const newUser = await UserService.registerUser(data);
-      return successResponse(
-        res,
-        201,
-        "New user created successfully!",
-        newUser,
-      );
+      // generate token
+      const userAccessToken = generateAccessToken(newUser.id);
+      return successResponse(res, 201, "New user created successfully!", {
+        token: userAccessToken,
+      });
     } catch (error: any) {
       console.error("❌ [Registration Error]:", error.message);
       if (error.message.includes("email already exist")) {
@@ -28,5 +28,8 @@ export default class UserController {
       console.log(error);
       return AppError(res, error.message);
     }
+  }
+  static async loginUser(req: Request, res: Response) {
+    
   }
 }

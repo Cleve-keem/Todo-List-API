@@ -1,9 +1,10 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { AuthError } from "../exceptions/AuthError.js";
 
+const { JsonWebTokenError, TokenExpiredError } = jwt;
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 if (!JWT_SECRET) {
