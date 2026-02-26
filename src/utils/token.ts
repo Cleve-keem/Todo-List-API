@@ -13,11 +13,11 @@ if (!JWT_SECRET) {
 
 export const generateAccessToken = (userId: number) => {
   return jwt.sign({ userId }, JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "7d",
   });
 };
 
-export const verifyToken = (token: string, password: string) => {
+export const verifyToken = (token: string) => {
   try {
     return jwt.verify(token, JWT_SECRET);
   } catch (err: any) {

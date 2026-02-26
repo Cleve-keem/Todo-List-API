@@ -1,7 +1,8 @@
 import express, { Application } from "express";
 import { limiter } from "./middleware/limiter.js";
-import userRoutes from "./routes/user.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+import userRoutes from "./routes/user.routes.js";
+import todoRoutes from "./routes/todo.routes.js"
 
 const expressLoader = () => {
   const app: Application = express();
@@ -12,10 +13,11 @@ const expressLoader = () => {
   app.use(errorHandler);
 
   // apis
-  app.get("/api/v1/health", (_, res) =>
+  app.get("/health-check", (_, res) =>
     res.status(200).json({ status: "UP", pid: process.pid }),
   );
-  app.use("/api/v1", userRoutes);
+  app.use("/api/v1/auth", userRoutes);
+  app.use("/api/v1/todo", todoRoutes)
 
   return app;
 };

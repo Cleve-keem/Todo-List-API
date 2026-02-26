@@ -22,9 +22,9 @@ export default class UserController {
 
       const newUser = await UserService.registerUser(data);
       // generate token
-      const userAccessToken = generateAccessToken(newUser.id);
+      const accessToken = generateAccessToken(newUser.id);
       return successResponse(res, 201, "New user created successfully!", {
-        token: userAccessToken,
+        token: accessToken
       });
     } catch (error: any) {
       console.error("❌ [Registration Error]:", error.message);
@@ -34,6 +34,7 @@ export default class UserController {
       return AppError(res, error.message);
     }
   }
+
   static async loginUser(req: Request, res: Response) {
     try {
       const { data, error } = await validateUserLoginDetails(req.body);
@@ -43,9 +44,9 @@ export default class UserController {
       }
       const user = await UserService.authenticateUser(data);
       // generate token
-      const token = generateAccessToken(user.id);
+      const accessToken = generateAccessToken(user.id);
       return successResponse(res, 200, "User Logged in successfully!", {
-        token,
+        token: accessToken,
       });
     } catch (error: any) {
       console.log("[Validation Error]", error.message);

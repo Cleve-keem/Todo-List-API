@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../config/database.js";
+import { TodoSchema } from "./todo.schema.js";
 
 export const Users = sequelize.define(
   "Users",
@@ -30,3 +31,8 @@ export const Users = sequelize.define(
     updatedAt: true,
   },
 );
+
+Users.hasMany(TodoSchema, {
+  foreignKey: "userID", // The field name in the Todo table
+  onDelete: "CASCADE", // If a user is deleted, their todos are deleted too
+});

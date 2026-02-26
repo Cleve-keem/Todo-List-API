@@ -7,6 +7,7 @@ import { Server } from "node:http";
 import ProcessSupervisor from "./config/process-supervisor.js";
 import { sequelize } from "./config/database.js";
 import { connectRedis } from "./lib/redisClient.js";
+import { setupAssociations } from "./models/schema/association.js";
 
 const startServer = async () => {
   const app: Application = expressLoader();
@@ -14,6 +15,7 @@ const startServer = async () => {
 
   try {
     await connectRedis();
+    setupAssociations();
     await sequelize.sync({ alter: false });
     console.log("✅ [Sequelize] 📅 Tables have been synced!");
 

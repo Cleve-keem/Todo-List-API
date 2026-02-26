@@ -8,11 +8,25 @@ Content-Type: application/json
   "password": "JohnDoe@12345"
 }
 
-### login user
-POST http://localhost:88/api/v1/login
+### Login to get token
+# @name login
+POST http://localhost:88/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "email": "johndoe@yahoo.com",
-  "password": "JohnDoe@123456"
+  "email": "johndoe@example.com",
+  "password": "JohnDoe@12345"
+}
+
+### Assign the token to a variable
+@authToken = {{login.response.body.response.token}}
+
+### Create a Todo (Protected Route)
+POST http://localhost:88/api/v1/todo
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Learn Jest",
+  "content": "Finish the unit testing module"
 }
