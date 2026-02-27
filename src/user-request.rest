@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 ### Assign the token to a variable
-@authToken = {{login.response.body.response.token}}
+@authToken = {{login.response.body.data.token}}
 
 ### Create a Todo (Protected Route)
 POST http://localhost:88/api/v1/todo
@@ -28,5 +28,5 @@ Authorization: Bearer {{authToken}}
 
 {
   "title": "Learn Jest",
-  "content": "Finish the unit testing module"
+  "description": "Finish the unit testing module"
 }

@@ -9,7 +9,7 @@ export const successResponse = (
   return res.status(statusCode).json({
     status: "success",
     message,
-    response: payload,
+    data: payload,
   });
 };
 

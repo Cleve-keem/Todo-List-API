@@ -1,13 +1,13 @@
-import { Users } from "./user.schema.js";
-import { TodoSchema } from "./todo.schema.js";
+import { UserModel } from "./user.schema.js";
+import { TodoModel } from "./todo.schema.js";
 
 export const setupAssociations = () => {
-  Users.hasMany(TodoSchema, {
+  UserModel.hasMany(TodoModel, {
     foreignKey: "userID",
     onDelete: "CASCADE",
   });
 
-  TodoSchema.belongsTo(Users, {
+  TodoModel.belongsTo(UserModel, {
     foreignKey: "userID",
     targetKey: "id",
   });
