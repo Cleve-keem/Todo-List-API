@@ -22,7 +22,7 @@ Content-Type: application/json
 @authToken = {{login.response.body.data.token}}
 
 ### Create a Todo (Protected Route)
-POST http://localhost:88/api/v1/todo
+POST http://localhost:88/api/v1/todos
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -30,3 +30,7 @@ Authorization: Bearer {{authToken}}
   "title": "Learn Jest",
   "description": "Finish the unit testing module"
 }
+
+### fetch all todos
+GET http://localhost:88/api/v1/todos
+Authorization: Bearer {{authToken}}

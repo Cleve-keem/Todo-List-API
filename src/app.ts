@@ -17,7 +17,7 @@ const expressLoader = () => {
     res.status(200).json({ status: "UP", pid: process.pid }),
   );
   app.use("/api/v1/auth", userRoutes);
-  app.use("/api/v1/todo", todoRoutes)
+  app.use("/api/v1/todos", todoRoutes)
 
   return app;
 };

@@ -3,6 +3,7 @@ import { AuthRequest } from "../dtos/types/express.js";
 import { AuthError } from "../exceptions/AuthError.js";
 import { verifyToken } from "../utils/token.js";
 import { UserRepository } from "../models/repositories/user.repository.js";
+import { errorResponse } from "../utils/response.js";
 
 export const authenticateToken = async (
   req: AuthRequest,
@@ -14,7 +15,7 @@ export const authenticateToken = async (
     const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
-      throw new AuthError("Unauthorized.");
+      return errorResponse(res, 401, "Unauthorized");
     }
 
     const decoded = verifyToken(token) as { userId: number };

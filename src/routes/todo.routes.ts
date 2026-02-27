@@ -7,5 +7,6 @@ const router = Router();
 router.use(authenticateToken)
 
 router.post("/", TodoController.createTodo);
+router.get("/", TodoController.getTodos);
 
 export default router;
