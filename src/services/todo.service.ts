@@ -1,6 +1,6 @@
 import { TodoCreationAttributes } from "../dtos/types/todo.type.js";
 import { AuthError } from "../exceptions/AuthError.js";
-import { TodoTitleExistError } from "../exceptions/TodoError.js";
+import { TodoNotFound, TodoTitleExistError } from "../exceptions/TodoError.js";
 import TodoRepository from "../models/repositories/todo.repository.js";
 
 class TodoService {
@@ -20,9 +20,21 @@ class TodoService {
     }
   }
 
-  static async getTodos(userId: number) {
+  static async getTodo(todoId: number) {
     try {
-      const todos = await TodoRepository.getAllTodo(userId);
+      const todo = await TodoRepository.findById(todoId);
+      if (!todo) throw new TodoNotFound("todo not found!");
+
+      const { id, title, description } = todo.dataValues;
+      return { id, title, description };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getAllTodos(userId: number) {
+    try {
+      const todos = await TodoRepository.findAll(userId);
       return todos.map((todo) => {
         const { id, title, description, createdAt, updatedAt } =
           todo.dataValues;

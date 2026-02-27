@@ -8,7 +8,10 @@ export default class TodoRepository {
   static async findTitle(todoTitle: string) {
     return await TodoModel.findOne({ where: { title: todoTitle } });
   }
-  static async getAllTodo(userId: number) {
+  static async findAll(userId: number) {
     return await TodoModel.findAll({ where: { userID: userId } });
+  }
+  static async findById(todoId: number) {
+    return await TodoModel.findByPk(todoId);
   }
 }

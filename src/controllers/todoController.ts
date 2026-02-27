@@ -25,10 +25,18 @@ class TodoController {
   static async updateTodo(req: Request, res: Response) {}
   static async deleteTodo(req: Request, res: Response) {}
 
-  static async getTodos(req: AuthRequest, res: Response) {
+  static async fetchOneTodo(req: Request, res: Response) {
+    const id = req.params.id as string;
+    try {
+      const todo = await TodoService.getTodo(Number(id));
+      return successResponse(res, 200, "fetched Todo", todo);
+    } catch (error) {}
+  }
+
+  static async fetchAllTodos(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.userId as number;
-      const todos = await TodoService.getTodos(userId);
+      const todos = await TodoService.getAllTodos(userId);
       return successResponse(res, 200, "fetched user todos", todos);
     } catch (error: any) {
       console.log("[Get todos controller error]:", error.message);

@@ -4,9 +4,10 @@ import { authenticateToken } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
-router.use(authenticateToken)
+router.use(authenticateToken);
 
 router.post("/", TodoController.createTodo);
-router.get("/", TodoController.getTodos);
+router.get("/", TodoController.fetchAllTodos);
+router.get("/:id", TodoController.fetchOneTodo);
 
 export default router;

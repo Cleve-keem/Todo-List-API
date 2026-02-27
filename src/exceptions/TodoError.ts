@@ -6,3 +6,10 @@ export class TodoTitleExistError extends Error {
     this.code = 409;
   }
 }
+
+export class TodoNotFound extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "TodoNotFound";
+  }
+}
