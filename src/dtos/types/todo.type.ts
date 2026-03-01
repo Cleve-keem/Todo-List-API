@@ -1,8 +1,8 @@
 import z from "zod";
-import { todoInputSchema } from "../zod/todo.zod.js";
+import { TodoInputSchema } from "../zod/todo.zod.js";
 import { Optional } from "sequelize";
 
-export type TodoInputType = z.infer<typeof todoInputSchema>;
+export type TodoInputType = z.infer<typeof TodoInputSchema>;
 
 export interface TodoAttributes extends TodoInputType {
   id: number;

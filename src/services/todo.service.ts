@@ -47,6 +47,12 @@ class TodoService {
       throw error;
     }
   }
+
+  static async updateTodo(todoId: number, data: TodoCreationAttributes) {
+    try {
+      const todo = await TodoRepository.findById(todoId);
+    } catch (error) {}
+  }
 }
 
 export default TodoService;

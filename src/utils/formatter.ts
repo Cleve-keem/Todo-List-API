@@ -19,3 +19,13 @@ export const formatUserLoginValidationError = (error: any) => {
 
   return errorMessage;
 };
+
+export const formatTodoError = (error: any) => {
+  const errorMessage = error.issues.reduce((acc: any, issue: any) => {
+    const path = issue.path[0];
+    acc[path] = issue.message;
+    return acc;
+  }, {});
+
+  return errorMessage;
+};

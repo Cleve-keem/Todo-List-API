@@ -32,5 +32,18 @@ Authorization: Bearer {{authToken}}
 }
 
 ### fetch all todos
-GET http://localhost:88/api/v1/todos/1
+GET http://localhost:88/api/v1/todos
 Authorization: Bearer {{authToken}}
+
+### fetch todo
+GET http://localhost:88/api/v1/todos/2
+Authorization: Bearer {{authToken}}
+
+### update todo
+PUT http://localhost:88/api/v1/todos/2
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "description": "Read more on Jest so that you can understand Jest better"
+}
