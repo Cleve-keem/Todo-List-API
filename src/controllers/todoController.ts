@@ -40,12 +40,20 @@ class TodoController {
         return errorResponse(res, 400, "Validation Error", errorMessages);
       }
 
-      const todo = await TodoService.updateTodo(
+      const updatedTodo = await TodoService.updateTodo(
         Number(id),
         data as TodoCreationAttributes,
       );
-      console.log(todo);
-    } catch (error) {}
+      return successResponse(
+        res,
+        201,
+        "Todo updated successfully!",
+        updatedTodo,
+      );
+    } catch (error: any) {
+      console.log(error.message);
+      return AppError(res, error.message);
+    }
   }
 
   static async fetchOneTodo(req: Request, res: Response) {

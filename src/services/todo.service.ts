@@ -51,14 +51,16 @@ class TodoService {
   static async updateTodo(todoId: number, data: TodoCreationAttributes) {
     try {
       const todoInstance = await TodoRepository.findById(todoId);
-      const updatedTodo = await todoInstance.update({
+      const updatedTodo = await todoInstance?.update({
         title: data.title,
-        description: data.description
+        description: data.description,
       });
 
-      return updatedTodo.dataValues;
+      const { id, title, description } = updatedTodo?.dataValues;
+      return { id, title, description };
     } catch (error: any) {
-      console.log(error.message)
+      console.log(error.message.message);
+      throw error;
     }
   }
 }
