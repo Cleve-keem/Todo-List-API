@@ -9,26 +9,38 @@ import {
 } from "../exceptions/UserErrors.js";
 import bcrypt from "bcryptjs";
 import { InvalidPasswordError } from "../exceptions/AuthError.js";
+import { generateAccessToken } from "../utils/token.js";
 
 export default class UserService {
-  static async registerUser(user: UserRegistrationType) {
-    const exitingUser = await UserRepository.findUserByEmail(user.email);
-    if (exitingUser) {
-      throw new UserAlreadyExitError("User email already exist");
-    }
-    return await UserRepository.createAndSaveUser(user);
+  static async registerUser(data: UserRegistrationType) {
+    const exitingUser = await UserRepository.findUserByEmail(data.email);
+    if (exitingUser) throw new UserAlreadyExitError("Email already in use");
+    // hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(data.password, salt);
+    // create and save user
+    const user = await UserRepository.createAndSaveUser({
+      ...data,
+      password: hashedPassword,
+    });
+
+    return {
+      token: generateAccessToken(user.id),
+      user: { id: user.id, email: user.email, fullname: user.fullname },
+    };
   }
 
-  static async authenticateUser(loginDetails: UserLoginType) {
-    const { email, password } = loginDetails;
-    const user = await UserRepository.findUserByEmail(email);
-    if (!user) {
-      throw new UserNotFoundError("No account found with this email!");
-    }
+  static async authenticateUser({ email, password }: UserLoginType) {
+    const data = await UserRepository.findUserByEmail(email);
+    if (!data) throw new UserNotFoundError("User not found");
 
-    const isMatch = await bcrypt.compare(password, user.dataValues.password);
+    const isMatch = await bcrypt.compare(password, data.dataValues.password);
     if (!isMatch) throw new InvalidPasswordError("Invalid credentials");
 
-    return user.dataValues;
+    const user = data.dataValues;
+    return {
+      token: generateAccessToken(user.id),
+      user: { id: user.id, email: user.email },
+    };
   }
 }

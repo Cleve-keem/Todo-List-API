@@ -10,5 +10,6 @@ router.post("/", TodoController.createTodo);
 router.get("/", TodoController.fetchAllTodos);
 router.get("/:id", TodoController.fetchOneTodo);
 router.put("/:id", TodoController.updateTodo);
+router.delete("/:id", TodoController.deleteTodo);
 
 export default router;

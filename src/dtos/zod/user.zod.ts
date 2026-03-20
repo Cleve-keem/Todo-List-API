@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs";
 import z from "zod";
 
 // create a baseUser schema
@@ -23,14 +22,10 @@ export const UserRegisterSchema = UserBase.extend({
   password: z
     .string()
     .min(8, "Password must be at least 8 characters long")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      "Password must contain an uppercase letter, lowercase letter, number, and special character",
-    )
-    .transform(async (pwd) => {
-      const salt = await bcrypt.genSalt(10);
-      return await bcrypt.hash(pwd, salt);
-    }),
+    .regex(/[A-Z]/, "Missing uppercase")
+    .regex(/[a-z]/, "Missing lowercase")
+    .regex(/[0-9]/, "Missing number")
+    .regex(/[@$!%*?&]/, "Missing special character"),
 });
 
 // Create a Login Schema
@@ -44,8 +39,8 @@ export const UserLoginSchema = z.object({
   password: z
     .string()
     .min(8, "Password must be at least 8 characters long")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      "Password must contain an uppercase letter, lowercase letter, number, and special character",
-    ),
+    .regex(/[A-Z]/, "Missing uppercase")
+    .regex(/[a-z]/, "Missing lowercase")
+    .regex(/[0-9]/, "Missing number")
+    .regex(/[@$!%*?&]/, "Missing special character"),
 });

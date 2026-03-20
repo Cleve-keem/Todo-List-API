@@ -23,18 +23,25 @@ const expressLoader = () => {
     credentials: true,
   };
 
-  // middlewares
+  // Security & Parsing
   app.use(cors(corsOptions));
   app.use(express.json());
   app.use(limiter);
-  app.use(errorHandler);
 
-  // apis
+  // Routes
   app.get("/health-check", (_, res) =>
     res.status(200).json({ status: "UP", pid: process.pid }),
   );
   app.use("/api/v1/auth", userRoutes);
   app.use("/api/v1/todos", todoRoutes);
+
+  // Catch-All for 404s
+  app.use((req, res) => {
+    res.status(404).json({ status: "error", message: "Route not found" });
+  });
+
+  // Global error
+  app.use(errorHandler);
 
   return app;
 };

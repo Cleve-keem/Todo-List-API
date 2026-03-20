@@ -1,6 +1,9 @@
 import { TodoCreationAttributes } from "../dtos/types/todo.type.js";
 import { AuthError } from "../exceptions/AuthError.js";
-import { TodoNotFound, TodoTitleExistError } from "../exceptions/TodoError.js";
+import {
+  TodoNotFoundError,
+  TodoTitleExistError,
+} from "../exceptions/TodoError.js";
 import TodoRepository from "../models/repositories/todo.repository.js";
 
 class TodoService {
@@ -23,7 +26,7 @@ class TodoService {
   static async getTodo(todoId: number) {
     try {
       const todo = await TodoRepository.findById(todoId);
-      if (!todo) throw new TodoNotFound("todo not found!");
+      if (!todo) throw new TodoNotFoundError("todo not found!");
 
       const { id, title, description } = todo.dataValues;
       return { id, title, description };
@@ -58,6 +61,20 @@ class TodoService {
 
       const { id, title, description } = updatedTodo?.dataValues;
       return { id, title, description };
+    } catch (error: any) {
+      console.log(error.message.message);
+      throw error;
+    }
+  }
+
+  static async deleteTask(todoId: number) {
+    try {
+      const wasDeleted = await TodoRepository.deleteTodoById(todoId);
+      if (!wasDeleted) {
+        throw new Error("Todo not found");
+      }
+
+      return wasDeleted;
     } catch (error: any) {
       console.log(error.message.message);
       throw error;

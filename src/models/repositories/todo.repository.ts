@@ -14,4 +14,11 @@ export default class TodoRepository {
   static async findById(todoId: number) {
     return await TodoModel.findByPk(todoId);
   }
+  static async deleteTodoById(todoId: number) {
+    const deletedRows = await TodoModel.destroy({
+      where: { id: todoId },
+    });
+
+    return deletedRows > 0;
+  }
 }

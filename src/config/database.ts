@@ -5,12 +5,14 @@ import { Sequelize } from "sequelize";
 
 const username = process.env.MYSQL_ROOT_USER as string;
 const password = process.env.MYSQL_ROOT_PASSWORD as string;
+const dbName = (process.env.DATABASE_NAME as string) || "TodoListDatabase";
 
-export const sequelize = new Sequelize("TodoListDatabase", username, password, {
+export const sequelize = new Sequelize(dbName, username, password, {
   host: process.env.MYSQL_HOST,
-  port: 4000,
+  port: Number(process.env.MYSQL_PORT) || 4000,
   dialect: "mysql",
   logging: false,
+  pool: { max: 5, min: 0, acquire: 30000, idle: 10000 },
 });
 
 try {

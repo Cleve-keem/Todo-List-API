@@ -2,23 +2,19 @@ import { Request, Response } from "express";
 import { AuthRequest } from "../dtos/types/express.js";
 import TodoService from "../services/todo.service.js";
 import { AppError, errorResponse, successResponse } from "../utils/response.js";
-import { TodoTitleExistError } from "../exceptions/TodoError.js";
+import {
+  TodoNotFoundError,
+  TodoTitleExistError,
+} from "../exceptions/TodoError.js";
 import { AuthError } from "../exceptions/AuthError.js";
-import { validateTodoData } from "../utils/validator.js";
-import { formatTodoError } from "../utils/formatter.js";
 import { TodoCreationAttributes } from "../dtos/types/todo.type.js";
 
 class TodoController {
   static async createTodo(req: AuthRequest, res: Response) {
     try {
       const userID = req.user?.userId;
-      const { data, error } = await validateTodoData(req.body);
-      if (error) {
-        const errorMessages = formatTodoError(error);
-        return errorResponse(res, 400, "validation Error", errorMessages);
-      }
 
-      const todoData = { ...data, userID } as TodoCreationAttributes;
+      const todoData = { ...req.body, userID } as TodoCreationAttributes;
       // create todo
       const result = await TodoService.createTodo(todoData);
       return successResponse(res, 201, "Todo created successfully!", result);
@@ -34,15 +30,10 @@ class TodoController {
   static async updateTodo(req: Request, res: Response) {
     try {
       const id = req.params.id as string;
-      const { data, error } = await validateTodoData(req.body);
-      if (error) {
-        const errorMessages = await formatTodoError(error);
-        return errorResponse(res, 400, "Validation Error", errorMessages);
-      }
 
       const updatedTodo = await TodoService.updateTodo(
         Number(id),
-        data as TodoCreationAttributes,
+        req.body as TodoCreationAttributes,
       );
       return successResponse(
         res,
@@ -80,7 +71,19 @@ class TodoController {
     }
   }
 
-  static async deleteTodo(req: Request, res: Response) {}
+  static async deleteTodo(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    try {
+      await TodoService.deleteTask(id);
+      return successResponse(res, 204, "Todo deleted successfully");
+    } catch (error: any) {
+      console.log("❌[Delete todo error]:", error.message);
+      if (error instanceof TodoNotFoundError) {
+        return errorResponse(res, 404, error.message);
+      }
+      return AppError(res, error.message);
+    }
+  }
 }
 
 export default TodoController;
