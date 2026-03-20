@@ -1,70 +1,48 @@
 import { Server } from "node:http";
 
 class ProcessSupervisor {
-  private server: Server;
-  private sequelize;
-
-  constructor(server: Server, sequelize: any) {
-    this.server = server;
-    this.sequelize = sequelize;
-  }
+  constructor(
+    private server: Server,
+    private sequelize: any,
+  ) {}
 
   public initialize() {
-    // listen to both signal (sigterm | sigint)
     ["SIGINT", "SIGTERM"].forEach((signal) =>
-      process.on(signal, async () => this.handleGracefulShutdown(signal)),
+      process.on(signal, () => this.shutdown(signal)),
     );
-    // uncaughtExeception
-    process.on("uncaughtException", (error: any) =>
-      this.handleCrash("unhandledRejection", error),
+    process.on("uncaughtException", (err) =>
+      this.handleCrash("UncaughtException", err),
     );
-    // unhandleRejection
-    process.on("unhandledRejection", (reason: unknown) => {
-      const error =
-        reason instanceof Error ? reason : new Error(String(reason));
-      this.handleCrash("uncaughtException", error);
-    });
+    process.on("unhandledRejection", (reason) =>
+      this.handleCrash("UnhandledRejection", reason as Error),
+    );
   }
+
   // Handle Crash
-  async handleCrash(type: string, error: Error) {
-    // 1. console the object of the error
-    console.log(`[FATAL ERROR] ${type}`, {
-      error: error.message,
-      cause: error.cause,
-      time: new Date().toISOString(),
-    });
-    // 2. send a graceful shotdown
-    await this.handleGracefulShutdown(type, true);
+  private async handleCrash(type: string, err: Error) {
+    console.error(`[FATAL] ${type}:`, err);
+    await this.shutdown(type, true);
   }
 
   // Graceful Shutdown
-  private async handleGracefulShutdown(
-    signal: string,
-    isCrash: boolean = false,
-  ) {
-    console.log(`💻 [System] ${signal} received, closing resources...`);
+  private async shutdown(signal: string, isCrash = false) {
+    console.log(`💻[System] ${signal} received. Closing up...`);
+
+    const forceExit = setTimeout(() => process.exit(1), 5000);
+    forceExit.unref();
+
     try {
-      // set timer
-      const forceExit = setTimeout(() => process.exit(1), 1000);
-      forceExit.unref();
-
-      // Stop server listening
-      if (this.server.listening) {
-        console.log(`💻 [System] closing server...`);
+      // stop server listening
+      if (this.server.listening)
         await new Promise((resolve) => this.server.close(resolve));
-        console.log(`💻 [System] server closed!`);
-      }
+      console.log(`💻 [System] server closed!`);
       //disconnect sequelize
-      if (this.sequelize) {
-        console.log("🔃 [Sequelize] disconnecting...");
-        await this.sequelize.disconnect();
-        console.log("✔ [Sequelize] disconnected successfully!");
-      }
-
+      if (this.sequelize) await this.sequelize.disconnect();
+      console.log("✔ [Sequelize] disconnected successfully!");
+      console.log("[System] Cleanup complete.");
       // crash
       process.exit(isCrash ? 1 : 0);
-    } catch (err: any) {
-      console.error("💻 [System] error during shutdown", err.message);
+    } catch (err) {
       process.exit(1);
     }
   }
