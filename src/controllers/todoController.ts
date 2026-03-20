@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../dtos/types/express.js";
 import TodoService from "../services/todo.service.js";
-import { AppError, errorResponse, successResponse } from "../utils/response.js";
+import {
+  InternalServerErrorResponse,
+  errorResponse,
+  successResponse,
+} from "../utils/response.js";
 import {
   TodoNotFoundError,
   TodoTitleExistError,
@@ -23,7 +27,7 @@ class TodoController {
       if (error instanceof TodoTitleExistError) {
         return errorResponse(res, 409, error.message);
       }
-      return AppError(res, error.message);
+      return InternalServerErrorResponse(res, error.message);
     }
   }
 
@@ -43,7 +47,7 @@ class TodoController {
       );
     } catch (error: any) {
       console.log(error.message);
-      return AppError(res, error.message);
+      return InternalServerErrorResponse(res, error.message);
     }
   }
 
@@ -53,7 +57,7 @@ class TodoController {
       const todo = await TodoService.getTodo(Number(id));
       return successResponse(res, 200, "fetched Todo", todo);
     } catch (error) {
-      return AppError(res);
+      return InternalServerErrorResponse(res);
     }
   }
 
@@ -67,7 +71,7 @@ class TodoController {
       if (error instanceof AuthError) {
         return errorResponse(res, 401, error.message);
       }
-      return AppError(res, error.message);
+      return InternalServerErrorResponse(res, error.message);
     }
   }
 
@@ -81,7 +85,7 @@ class TodoController {
       if (error instanceof TodoNotFoundError) {
         return errorResponse(res, 404, error.message);
       }
-      return AppError(res, error.message);
+      return InternalServerErrorResponse(res, error.message);
     }
   }
 }

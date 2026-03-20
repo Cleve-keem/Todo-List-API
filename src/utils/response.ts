@@ -26,7 +26,7 @@ export const errorResponse = (
   });
 };
 
-export const AppError = (res: Response, errorMessage?: any) => {
+export const InternalServerErrorResponse = (res: Response, errorMessage?: any) => {
   return res.status(500).json({
     success: false,
     message: "Something went wrong",

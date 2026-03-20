@@ -13,7 +13,7 @@ export class UserNotFoundError extends Error {
 
   constructor(message: string) {
     super(message);
-    this.statusCode = 400;
+    this.statusCode = 404;
     this.name = "UserNotFound";
   }
 }

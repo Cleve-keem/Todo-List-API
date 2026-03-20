@@ -13,7 +13,7 @@ export default class UserController {
         result.token,
       );
     } catch (error: any) {
-      console.error("❌ [Registration Error]:", error.message);
+      console.error("❌[Registration Error]:", error.message);
       next(error);
     }
   }
@@ -28,6 +28,7 @@ export default class UserController {
         result.token,
       );
     } catch (error: any) {
+      console.log("❌[Login error]:", error.message);
       next(error);
     }
   }

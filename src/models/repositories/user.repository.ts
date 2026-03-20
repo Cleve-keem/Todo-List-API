@@ -3,7 +3,7 @@ import { UserRegistrationType } from "../../dtos/types/user.type.js";
 
 export class UserRepository {
   // create and save
-  static async createAndSaveUser(user: UserRegistrationType): Promise<any> {
+  static async createAndSaveUser(user: UserRegistrationType) {
     return await UserModel.create(user);
   }
 
