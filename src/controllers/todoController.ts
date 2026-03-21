@@ -1,42 +1,30 @@
-import { Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { AuthRequest } from "../dtos/types/express.js";
 import TodoService from "../services/todo.service.js";
-import {
-  InternalServerErrorResponse,
-  errorResponse,
-  successResponse,
-} from "../utils/response.js";
-import {
-  TodoNotFoundError,
-  TodoTitleExistError,
-} from "../exceptions/TodoError.js";
-import { AuthError } from "../exceptions/AuthError.js";
+import { successResponse } from "../utils/response.js";
 import { TodoCreationAttributes } from "../dtos/types/todo.type.js";
 
 class TodoController {
-  static async createTodo(req: AuthRequest, res: Response) {
+  static async createTodo(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      const userID = req.user?.userId;
+      const userId = req.user?.userId;
 
-      const todoData = { ...req.body, userID } as TodoCreationAttributes;
-      // create todo
-      const result = await TodoService.createTodo(todoData);
+      const result = await TodoService.createTodo({ ...req.body, userId });
       return successResponse(res, 201, "Todo created successfully!", result);
     } catch (error: any) {
-      console.log("❌[Create todo error]:", error.message);
-      if (error instanceof TodoTitleExistError) {
-        return errorResponse(res, 409, error.message);
-      }
-      return InternalServerErrorResponse(res, error.message);
+      console.log("❌ [createTodo controller]:", error.message);
+      next(error);
     }
   }
 
-  static async updateTodo(req: Request, res: Response) {
+  static async updateTodo(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      const id = req.params.id as string;
+      const id = Number(req.params.id);
+      const userId = req.user?.userId as number;
 
       const updatedTodo = await TodoService.updateTodo(
-        Number(id),
+        id,
+        userId,
         req.body as TodoCreationAttributes,
       );
       return successResponse(
@@ -46,46 +34,51 @@ class TodoController {
         updatedTodo,
       );
     } catch (error: any) {
-      console.log(error.message);
-      return InternalServerErrorResponse(res, error.message);
+      console.log("❌ [updateTodo controller]:", error.message);
+      next(error);
     }
   }
 
-  static async fetchOneTodo(req: Request, res: Response) {
-    const id = req.params.id as string;
+  static async fetchOneTodo(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
+    const id = Number(req.params.id);
+    const userId = req.user?.userId as number;
     try {
-      const todo = await TodoService.getTodo(Number(id));
+      const todo = await TodoService.getTodo(id, userId);
       return successResponse(res, 200, "fetched Todo", todo);
-    } catch (error) {
-      return InternalServerErrorResponse(res);
+    } catch (error: any) {
+      console.error("❌ [featchOneTodo controller]:", error.message);
+      next(error);
     }
   }
 
-  static async fetchAllTodos(req: AuthRequest, res: Response) {
+  static async fetchAllTodos(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
     try {
       const userId = req.user?.userId as number;
       const todos = await TodoService.getAllTodos(userId);
       return successResponse(res, 200, "fetched user todos", todos);
     } catch (error: any) {
-      console.log("[Get todos controller error]:", error.message);
-      if (error instanceof AuthError) {
-        return errorResponse(res, 401, error.message);
-      }
-      return InternalServerErrorResponse(res, error.message);
+      console.log("❌ [fetchAllTodos controller]:", error.message);
+      next(error);
     }
   }
 
-  static async deleteTodo(req: Request, res: Response) {
+  static async deleteTodo(req: AuthRequest, res: Response, next: NextFunction) {
     const id = Number(req.params.id);
+    const userId = req.user?.userId as number;
     try {
-      await TodoService.deleteTask(id);
+      await TodoService.deleteTodo(id, userId);
       return successResponse(res, 204, "Todo deleted successfully");
     } catch (error: any) {
-      console.log("❌[Delete todo error]:", error.message);
-      if (error instanceof TodoNotFoundError) {
-        return errorResponse(res, 404, error.message);
-      }
-      return InternalServerErrorResponse(res, error.message);
+      console.log("❌[deleteTodo controller]:", error.message);
+      next(error);
     }
   }
 }

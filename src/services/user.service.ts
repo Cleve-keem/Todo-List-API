@@ -19,14 +19,19 @@ export default class UserService {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(data.password, salt);
     // create and save user
-    const user = await UserRepository.createAndSaveUser({
+    const result = await UserRepository.createAndSaveUser({
       ...data,
       password: hashedPassword,
     });
 
+    const user = result.dataValues;
     return {
-      token: generateAccessToken(user.id),
-      user: { id: user.id, email: user.email, fullname: user.fullname },
+      token: generateAccessToken(user.dataValues.id),
+      user: {
+        id: user.id,
+        email: user.email,
+        fullname: user.fullname,
+      },
     };
   }
 

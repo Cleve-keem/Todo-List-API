@@ -6,7 +6,7 @@ export type TodoInputType = z.infer<typeof TodoInputSchema>;
 
 export interface TodoAttributes extends TodoInputType {
   id: number;
-  userID: number;
+  userId: number;
 }
 
 export type TodoCreationAttributes = Optional<TodoAttributes, "id">;
