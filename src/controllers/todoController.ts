@@ -7,10 +7,10 @@ import { TodoCreationAttributes } from "../dtos/types/todo.type.js";
 class TodoController {
   static async createTodo(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      const userId = req.user?.userId;
+      const userID = req.user?.userId;
       const result = await TodoService.createTodo({
         ...req.body,
-        userID: userId,
+        userID,
       });
       return successResponse(res, 201, "Todo created successfully!", result);
     } catch (error: any) {
@@ -22,11 +22,11 @@ class TodoController {
   static async updateTodo(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const id = Number(req.params.id);
-      const userId = req.user?.userId as number;
+      const userID = req.user?.userId as number;
 
       const updatedTodo = await TodoService.updateTodo(
         id,
-        userId,
+        userID,
         req.body as TodoCreationAttributes,
       );
       return successResponse(
@@ -47,9 +47,9 @@ class TodoController {
     next: NextFunction,
   ) {
     const id = Number(req.params.id);
-    const userId = req.user?.userId as number;
+    const userID = req.user?.userId as number;
     try {
-      const todo = await TodoService.getTodo(id, userId);
+      const todo = await TodoService.getTodo(id, userID);
       return successResponse(res, 200, "fetched Todo", todo);
     } catch (error: any) {
       console.error("❌ [featchOneTodo controller]:", error.message);
@@ -63,8 +63,8 @@ class TodoController {
     next: NextFunction,
   ) {
     try {
-      const userId = req.user?.userId as number;
-      const todos = await TodoService.getAllTodos(userId);
+      const userID = req.user?.userId as number;
+      const todos = await TodoService.getAllTodos(userID);
       return successResponse(res, 200, "fetched user todos", todos);
     } catch (error: any) {
       console.log("❌ [fetchAllTodos controller]:", error.message);
@@ -74,12 +74,12 @@ class TodoController {
 
   static async deleteTodo(req: AuthRequest, res: Response, next: NextFunction) {
     const id = Number(req.params.id);
-    const userId = req.user?.userId as number;
+    const userID = req.user?.userId as number;
     try {
-      await TodoService.deleteTodo(id, userId);
+      await TodoService.deleteTodo(id, userID);
       return successResponse(res, 204, "Todo deleted successfully");
     } catch (error: any) {
-      console.log("❌[deleteTodo controller]:", error.message);
+      console.log("❌ [deleteTodo controller]:", error.message);
       next(error);
     }
   }

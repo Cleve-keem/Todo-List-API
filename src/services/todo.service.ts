@@ -7,7 +7,10 @@ import TodoRepository from "../models/repositories/todo.repository.js";
 
 class TodoService {
   static async createTodo(todo: TodoCreationAttributes) {
-    const existTodo = await TodoRepository.findByTitle(todo.title, todo.userID!);
+    const existTodo = await TodoRepository.findByTitle(
+      todo.title,
+      todo.userID!,
+    );
     if (existTodo)
       throw new TodoTitleExistError("You already have a todo with this title");
 
@@ -19,34 +22,23 @@ class TodoService {
     };
   }
 
-  static async getTodo(todoId: number, userId: number) {
-    const todo = await TodoRepository.findByIdAndUser(todoId, userId);
+  static async getTodo(todoId: number, userID: number) {
+    const todo = await TodoRepository.findByIdAndUser(todoId, userID);
     if (!todo) throw new TodoNotFoundError("Todo not found or access denied");
-
-    return {
-      id: todo.dataValues.id,
-      title: todo.dataValues.title,
-      description: todo.dataValues.description,
-    };
+    return todo;
   }
 
-  static async getAllTodos(userId: number) {
-    const todos = await TodoRepository.findAllUserTodo(userId);
-    return todos.map((todo) => {
-      return {
-        id: todo.dataValues.id,
-        title: todo.dataValues.title,
-        description: todo.dataValues.description,
-      };
-    });
+  static async getAllTodos(userID: number) {
+    const todos = await TodoRepository.findAllUserTodo(userID);
+    return todos;
   }
 
   static async updateTodo(
     todoId: number,
-    userId: number,
+    userID: number,
     data: TodoCreationAttributes,
   ) {
-    const todo = await TodoRepository.findByIdAndUser(todoId, userId);
+    const todo = await TodoRepository.findByIdAndUser(todoId, userID);
     if (!todo) throw new TodoNotFoundError("Forbidden");
 
     await todo?.update({
@@ -61,8 +53,8 @@ class TodoService {
     };
   }
 
-  static async deleteTodo(todoId: number, userId: number) {
-    const wasDeleted = await TodoRepository.deleteByIdAndUser(todoId, userId);
+  static async deleteTodo(todoId: number, userID: number) {
+    const wasDeleted = await TodoRepository.deleteByIdAndUser(todoId, userID);
     if (!wasDeleted) {
       throw new Error("Todo not found or Unauthorized");
     }

@@ -5,11 +5,12 @@ export const successResponse = (
   statusCode: number,
   message: string,
   payload?: unknown,
+  key: string = "data",
 ) => {
   return res.status(statusCode).json({
     status: "success",
     message,
-    data: payload,
+    [key]: payload,
   });
 };
 
@@ -26,7 +27,10 @@ export const errorResponse = (
   });
 };
 
-export const InternalServerErrorResponse = (res: Response, errorMessage?: any) => {
+export const InternalServerErrorResponse = (
+  res: Response,
+  errorMessage?: any,
+) => {
   return res.status(500).json({
     success: false,
     message: "Something went wrong",

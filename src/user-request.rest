@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 ### Assign the token to a variable
-@authToken = {{login.response.body.data.token}}
+@authToken = {{login.response.body.token}}
 
 ### Create a Todo (Protected Route)
 POST http://localhost:88/api/v1/todos
@@ -50,5 +50,5 @@ Authorization: Bearer {{authToken}}
 }
 
 ### delete todo
-DELETE http://localhost:88/api/v1/todos/2
-Authorization: : Bearer {{{{authToken}}}}
+DELETE http://localhost:88/api/v1/todos/5
+Authorization: Bearer {{authToken}}

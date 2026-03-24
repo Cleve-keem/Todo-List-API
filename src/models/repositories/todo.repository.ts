@@ -7,19 +7,24 @@ export default class TodoRepository {
   }
 
   static async findByTitle(title: string, userID: number) {
-    return await TodoModel.findOne({ where: { title, userID } });
+    return await TodoModel.findOne({
+      where: { title, userID },
+      attributes: ["id", "title", "description"],
+    });
   }
 
   static async findAllUserTodo(userID: number) {
     return await TodoModel.findAll({
       where: { userID },
       attributes: ["id", "title", "description"],
+      raw: true,
     });
   }
 
   static async findByIdAndUser(todoId: number, userID: number) {
     return await TodoModel.findOne({
       where: { id: todoId, userID },
+      attributes: ["id", "title", "description"],
     });
   }
 
@@ -28,6 +33,7 @@ export default class TodoRepository {
       where: { id, userID },
     });
 
+    console.log(deletedRows);
     return deletedRows > 0;
   }
 }
