@@ -7,17 +7,15 @@ import TodoRepository from "../models/repositories/todo.repository.js";
 
 class TodoService {
   static async createTodo(todo: TodoCreationAttributes) {
-    const existTodo = await TodoRepository.findByTitle(todo.title);
+    const existTodo = await TodoRepository.findByTitle(todo.title, todo.userID!);
     if (existTodo)
       throw new TodoTitleExistError("You already have a todo with this title");
 
     const result = await TodoRepository.store(todo);
-    const data = result.dataValues;
-
     return {
-      id: data.id,
-      title: data.title,
-      description: data.description,
+      id: result.dataValues.id,
+      title: result.dataValues.title,
+      description: result.dataValues.description,
     };
   }
 
@@ -33,7 +31,7 @@ class TodoService {
   }
 
   static async getAllTodos(userId: number) {
-    const todos = await TodoRepository.findAll(userId);
+    const todos = await TodoRepository.findAllUserTodo(userId);
     return todos.map((todo) => {
       return {
         id: todo.dataValues.id,

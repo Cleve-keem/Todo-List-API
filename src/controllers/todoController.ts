@@ -8,8 +8,10 @@ class TodoController {
   static async createTodo(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.userId;
-
-      const result = await TodoService.createTodo({ ...req.body, userId });
+      const result = await TodoService.createTodo({
+        ...req.body,
+        userID: userId,
+      });
       return successResponse(res, 201, "Todo created successfully!", result);
     } catch (error: any) {
       console.log("❌ [createTodo controller]:", error.message);

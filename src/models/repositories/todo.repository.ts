@@ -5,21 +5,24 @@ export default class TodoRepository {
   static async store(todo: TodoCreationAttributes) {
     return await TodoModel.create(todo);
   }
-  static async findByTitle(title: string) {
-    return await TodoModel.findOne({ where: { title }, raw: true });
+
+  static async findByTitle(title: string, userID: number) {
+    return await TodoModel.findOne({ where: { title, userID } });
   }
-  static async findAll(userID: number) {
+
+  static async findAllUserTodo(userID: number) {
     return await TodoModel.findAll({
       where: { userID },
       attributes: ["id", "title", "description"],
-      raw: true,
     });
   }
-  static async findByIdAndUser(todoId: number, userId: number) {
+
+  static async findByIdAndUser(todoId: number, userID: number) {
     return await TodoModel.findOne({
-      where: { id: todoId, userID: userId },
+      where: { id: todoId, userID },
     });
   }
+
   static async deleteByIdAndUser(id: number, userID: number) {
     const deletedRows = await TodoModel.destroy({
       where: { id, userID },
