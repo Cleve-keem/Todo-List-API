@@ -3,6 +3,7 @@ import {
   TodoNotFoundError,
   TodoTitleExistError,
 } from "../exceptions/TodoError.js";
+import { client } from "../lib/redisClient.js";
 import TodoRepository from "../models/repositories/todo.repository.js";
 
 class TodoService {
@@ -28,9 +29,28 @@ class TodoService {
     return todo;
   }
 
-  static async getAllTodos(userID: number) {
-    const todos = await TodoRepository.findAllUserTodo(userID);
-    return todos;
+  static async getAllTodos(userID: number, page: number, limit: number) {
+    const todoCacheKey = `todos:user:${userID}`;
+
+    const cachedTodos = await client.get(todoCacheKey);
+    if (cachedTodos) {
+      console.log("🚀 [Redis]: returning cached todos");
+      const data = JSON.parse(cachedTodos);
+
+      return {
+        data,
+        page,
+        limit,
+        total: data.length,
+      };
+    }
+
+    const offset = (page - 1) * limit;
+    const todos = await TodoRepository.findAllUserTodo(userID, limit, offset);
+
+    // cache data
+    await client.set(todoCacheKey, JSON.stringify(todos), { EX: 1000 });
+    return { data: todos, page, limit, total: todos.length };
   }
 
   static async updateTodo(

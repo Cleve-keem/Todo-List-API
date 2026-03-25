@@ -32,7 +32,7 @@ Authorization: Bearer {{authToken}}
 }
 
 ### fetch all todos
-GET http://localhost:88/api/v1/todos
+GET http://localhost:88/api/v1/todos?page=1&limit=1
 Authorization: Bearer {{authToken}}
 
 ### fetch todo

@@ -64,8 +64,11 @@ class TodoController {
   ) {
     try {
       const userID = req.user?.userId as number;
-      const todos = await TodoService.getAllTodos(userID);
-      return successResponse(res, 200, "fetched user todos", todos);
+      const page = Math.max(1, Number(req.query.page));
+      const limit = Math.min(10, Math.max(1, Number(req.query.limit)));
+
+      const todos = await TodoService.getAllTodos(userID, page, limit);
+      return successResponse(res, 200, "fetched user todos", todos, "response");
     } catch (error: any) {
       console.log("❌ [fetchAllTodos controller]:", error.message);
       next(error);
