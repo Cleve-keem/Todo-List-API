@@ -39,7 +39,7 @@ export default class UserService {
 
   static async authenticateUser({ email, password }: UserLoginType) {
     const data = await UserRepository.findUserByEmail(email.toLowerCase());
-    if (!data) throw new UserNotFoundError("User not found");
+    if (!data) throw new UserNotFoundError("Invalid credentials");
 
     const isMatch = await bcrypt.compare(password, data.dataValues.password);
     if (!isMatch) throw new InvalidPasswordError("Invalid credentials");
