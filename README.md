@@ -157,7 +157,6 @@ src/
   {
     "title": "Buy groceries",
     "description": "Milk, eggs, bread",
-    "completed": false
   }
   ```
 - **GET** `/` - Fetch all todos for authenticated user
@@ -166,7 +165,7 @@ src/
   ```json
   {
     "title": "Updated title",
-    "completed": true
+    "description": "updated description"
   }
   ```
 - **DELETE** `/:id` - Delete a todo
@@ -184,7 +183,7 @@ This will start the server with auto-reload using Nodemon.
 pnpm build && pnpm start
 ```
 
-The server will be available at `http://localhost:5000` (or your configured PORT).
+The server will be available at `http://localhost:88` (or your configured PORT).
 
 ## 🔐 Security Features
 
@@ -221,7 +220,6 @@ To test the API endpoints, use the provided `user-request.rest` file in your RES
 - `userId` - Foreign key to Users table
 - `title` - Todo title
 - `description` - Todo description
-- `completed` - Boolean status
 - `createdAt` - Timestamp
 - `updatedAt` - Timestamp
 
