@@ -3,9 +3,9 @@ POST http://localhost:88/api/v1/auth/register
 Content-Type: application/json
 
 {
-  "fullname": "John Doe",
-  "email": "johndoe@example.com",
-  "password": "JohnDoe@12345"
+  "fullname": "Lukman Bello",
+  "email": "Bellolukman@gmail.com",
+  "password": "Bella$12345A$$A"
 }
 
 ### Login to get token
@@ -14,8 +14,8 @@ POST http://localhost:88/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "email": "johndoe@example.com",
-  "password": "JohnDoe@12345"
+  "email": "Bellolukman@gmail.com",
+  "password": "Bella$12345A$$A"
 }
 
 ### Assign the token to a variable
@@ -28,15 +28,15 @@ Authorization: Bearer {{authToken}}
 
 {
   "title": "Learn React Native",
-  "description": "Start working building more mobile app"
+  "description": "Work till I get a good system to complete my react native course and start building mobile applications"
 }
 
 ### fetch all todos
-GET http://localhost:88/api/v1/todos?page=1&limit=1
+GET http://localhost:88/api/v1/todos?page=1&limit=10
 Authorization: Bearer {{authToken}}
 
 ### fetch todo
-GET http://localhost:88/api/v1/todos/2
+GET http://localhost:88/api/v1/todos/5
 Authorization: Bearer {{authToken}}
 
 ### update todo
@@ -50,5 +50,5 @@ Authorization: Bearer {{authToken}}
 }
 
 ### delete todo
-DELETE http://localhost:88/api/v1/todos/5
+DELETE http://localhost:88/api/v1/todos/6
 Authorization: Bearer {{authToken}}

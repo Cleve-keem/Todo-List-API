@@ -1,9 +1,9 @@
 import { UserModel } from "../schema/user.schema.js";
-import { UserRegistrationType } from "../../dtos/types/user.type.js";
+import { UserRegistrationAttributes } from "../../dtos/types/user.type.js";
 
 export class UserRepository {
   // create and save
-  static async createAndSaveUser(user: UserRegistrationType) {
+  static async createAndSaveUser(user: UserRegistrationAttributes) {
     return await UserModel.create(user);
   }
 

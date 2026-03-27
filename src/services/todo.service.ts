@@ -14,6 +14,15 @@ class TodoService {
     );
     if (existTodo)
       throw new TodoTitleExistError("You already have a todo with this title");
+    
+    // Clear cache
+    const keys = await client.keys(`todos:user:${todo.userID}:*`);
+    if (keys.length > 0) {
+      console.log(
+        `🧹 [Redis]: Cleared ${keys.length} cache keys for user ${todo.userID}`,
+      );
+      await client.del(keys);
+    }
 
     const result = await TodoRepository.store(todo);
     return {
@@ -24,17 +33,26 @@ class TodoService {
   }
 
   static async getTodo(todoId: number, userID: number) {
+    const cacheKey = `todo:user:${userID}:todo:${todoId}`;
+    const cachedTodo = await client.get(cacheKey);
+    if (cachedTodo) {
+      console.log("🚀 [Redis]: Serving todos from cache");
+      return JSON.parse(cachedTodo);
+    }
+
     const todo = await TodoRepository.findByIdAndUser(todoId, userID);
     if (!todo) throw new TodoNotFoundError("Todo not found or access denied");
+
+    // Cache todo
+    await client.set(cacheKey, JSON.stringify(todo), { EX: 600 });
     return todo;
   }
 
   static async getAllTodos(userID: number, page: number, limit: number) {
-    const todoCacheKey = `todos:user:${userID}`;
-
+    const todoCacheKey = `todos:user:${userID}:page:${page}:limit:${limit}`;
     const cachedTodos = await client.get(todoCacheKey);
     if (cachedTodos) {
-      console.log("🚀 [Redis]: returning cached todos");
+      console.log("🚀 [Redis]: Serving todos from cache");
       const data = JSON.parse(cachedTodos);
 
       return {
@@ -47,9 +65,8 @@ class TodoService {
 
     const offset = (page - 1) * limit;
     const todos = await TodoRepository.findAllUserTodo(userID, limit, offset);
-
-    // cache data
-    await client.set(todoCacheKey, JSON.stringify(todos), { EX: 1000 });
+    // Cache data
+    await client.set(todoCacheKey, JSON.stringify(todos), { EX: 600 });
     return { data: todos, page, limit, total: todos.length };
   }
 
@@ -60,6 +77,17 @@ class TodoService {
   ) {
     const todo = await TodoRepository.findByIdAndUser(todoId, userID);
     if (!todo) throw new TodoNotFoundError("Forbidden");
+
+    // Clear cache
+    const keys = await client.keys(`todos:user:${userID}:*`);
+    if (keys.length > 0) {
+      console.log(
+        `🧹 [Redis]: Cleared ${keys.length} cache keys for user ${userID}`,
+      );
+      await client.del(keys);
+    }
+
+    await client.del(`todo:user:${userID}:todo:${todoId}`);
 
     await todo?.update({
       title: data.title,
@@ -78,6 +106,16 @@ class TodoService {
     if (!wasDeleted) {
       throw new Error("Todo not found or Unauthorized");
     }
+
+    // Clear cache
+    const keys = await client.keys(`todos:user:${userID}:*`);
+    if (keys.length > 0) {
+      console.log(
+        `🧹 [Redis]: Cleared ${keys.length} cache keys for user ${userID}`,
+      );
+      await client.del(keys);
+    }
+    await client.del(`todo:user:${userID}:todo:${todoId}`);
 
     return wasDeleted;
   }

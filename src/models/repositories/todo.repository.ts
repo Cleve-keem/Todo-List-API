@@ -19,7 +19,6 @@ export default class TodoRepository {
       attributes: ["id", "title", "description"],
       limit,
       offset,
-      // order: [["createdAt", "ASCE"]],
       raw: true,
     });
   }
@@ -36,7 +35,6 @@ export default class TodoRepository {
       where: { id, userID },
     });
 
-    console.log(deletedRows);
     return deletedRows > 0;
   }
 }
